@@ -16,24 +16,35 @@ No VS Code, também é possível pressionar F5 e escolher **Controle de Notas (T
 
 ## Usar e configurar
 
-1. Use **Configurar turma** para escolher a quantidade de alunos e de avaliações, a menor e a maior nota permitidas e a média necessária para aprovação.
+1. Use **Configurar turma e critérios** para escolher a quantidade de alunos e avaliações, a faixa de cada nota e as pontuações totais para recuperação e aprovação.
 2. Preencha o nome e todas as notas de cada aluno. Aceitam-se vírgula ou ponto como separador decimal.
 3. Clique em **Calcular Resultados** ou pressione Ctrl+Enter.
-4. Consulte as médias individuais, a situação de cada aluno e o resumo da turma.
+4. Consulte a nota total, a média individual, as situações **Aprovado**, **Recuperação** ou **Reprovado** e o resumo da turma.
 5. Use **Limpar** (Ctrl+L) para uma nova turma com os mesmos critérios.
 
-Os valores iniciais reproduzem o PDF: 5 alunos, 3 avaliações, notas de 0 a 10 e aprovação a partir de 6. **São padrões editáveis**, conforme a orientação posterior do solicitante. São permitidos de 1 a 100 alunos e de 1 a 20 avaliações; esses limites mantêm o formulário manejável. Faixa e aprovação são configuráveis, inclusive com valores negativos na faixa, se necessário. A nota mínima deve ser menor que a máxima e o limite de aprovação deve ficar dentro dessa faixa.
+Os valores iniciais usam 5 alunos, 3 avaliações e notas de 0 a 10. Com essa configuração, o total inicial para recuperação é 12 e o total para aprovação é 18. **Todos esses valores são editáveis.** A turma e a quantidade de avaliações precisam ser de pelo menos 1, mas não possuem máximo programado; a capacidade prática depende dos recursos do computador. A faixa pode incluir valores negativos quando a área exigir.
+
+O programa calcula automaticamente o menor e o maior total possíveis multiplicando a quantidade de avaliações pela nota mínima e pela nota máxima. Os critérios configurados devem respeitar:
+
+```text
+menor total possível ≤ total de recuperação < total de aprovação ≤ maior total possível
+```
+
+Por exemplo, com três avaliações de 0 a 10, o total possível vai de 0 a 30. Configurando recuperação em 12 e aprovação em 18, um total 17 fica em recuperação e um total 18 fica aprovado.
 
 Alterar a configuração pede confirmação e inicia uma turma vazia. A interface tem rolagem horizontal e vertical para mais avaliações/alunos; Tab percorre e revela os campos. Os dados e as configurações são mantidos somente na memória durante a sessão. Fechar o programa perde o preenchimento, com confirmação quando houver dados.
 
 ## Regras de cálculo
 
-- Média individual: soma das notas dividida pela quantidade de avaliações, com pesos iguais.
-- Aprovado: soma das notas maior ou igual à média de aprovação multiplicada pela quantidade de avaliações. Essa comparação evita aprovar por arredondamento.
-- Reprovado: resultado abaixo desse limite.
+- Nota total: soma de todas as avaliações do aluno.
+- Aprovado: nota total igual ou superior ao total configurado para aprovação.
+- Recuperação: nota total igual ou superior ao total de recuperação e inferior ao total de aprovação.
+- Reprovado: nota total inferior ao total de recuperação.
+- Média individual: nota total dividida pela quantidade de avaliações, com pesos iguais. A média é informativa e não altera a situação.
+- A classificação usa o total exato antes da formatação visual.
 - Média da turma: soma de todas as notas dividida pelo total de notas; equivale à média das médias porque todos têm a mesma quantidade de avaliações.
-- Resumo: média da turma, número de aprovados e reprovados e maior/menor média individual.
-- Exibição com duas casas decimais; uma média abaixo do limite pode arredondar visualmente para ele sem mudar a reprovação.
+- Resumo: média da turma, números de aprovados, alunos em recuperação e reprovados, além da maior e menor média individual.
+- Totais e médias são exibidos com duas casas decimais.
 
 Entradas vazias, textos, NaN, infinito, notação científica e notas fora da faixa são recusados. Todos os alunos precisam estar preenchidos para calcular a turma. Ao editar qualquer campo, os resultados anteriores deixam de ser exibidos até novo cálculo. Nomes iguais são permitidos, pois a associação é feita pela posição na turma.
 
@@ -62,7 +73,7 @@ Os documentos originais foram preservados na raiz. `dist/`, `build/` e arquivos 
 
 ## Estruturas e diretrizes pedagógicas
 
-`alunos` é um vetor de nomes; `notas` é uma matriz cujas linhas correspondem aos mesmos índices do vetor. As dimensões seguem a configuração. Entradas inválidas ou vazias são representadas por `None` na matriz, nunca por zero implícito.
+`alunos` é um vetor de nomes; `notas` é uma matriz cujas linhas correspondem aos mesmos índices do vetor. As dimensões seguem a configuração, sem teto fixo no programa. Entradas inválidas ou vazias são representadas por `None` na matriz, nunca por zero implícito.
 
 Não há definição de classes próprias. Funções organizam validação, cálculos, renderização, configuração, limpeza e encerramento. Laços percorrem a matriz, acumulam notas, contam situações e procuram extremos. Comentários explicam sequência, seleção, repetição e métodos utilitários. Objetos da biblioteca padrão (Tkinter e Decimal) são usados conforme necessário; não há objetos personalizados.
 

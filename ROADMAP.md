@@ -5,7 +5,11 @@
 - [x] Interface Windows com Tkinter/ttk e tema nativo.
 - [x] Vetor de alunos e matriz de notas em programação procedural.
 - [x] Quantidades e critérios configuráveis, conforme orientação atualizada.
-- [x] Validação, médias, aprovação/reprovação e resumo da turma.
+- [x] Nota total e média exibidas para cada aluno.
+- [x] Classificação pelo total em Aprovado/Recuperação/Reprovado.
+- [x] Totais de recuperação e aprovação configuráveis.
+- [x] Quantidades a partir de 1, sem máximo programado.
+- [x] Layout simplificado com cartões e botões arredondados.
 - [x] Limpar, sair e confirmação ao descartar dados.
 - [x] Estado do preenchimento e invalidação de resultados após edição.
 - [x] Rolagem para turmas com mais alunos e avaliações.
@@ -24,7 +28,7 @@
 ## 1.2 — Critérios acadêmicos adicionais (dependem de requisitos)
 
 - [ ] Pesos individuais para avaliações.
-- [ ] Regra de recuperação e nota final.
+- [ ] Prova de recuperação e cálculo de uma nova nota final.
 - [ ] Identificação de disciplina, turma e período.
 
 As versões futuras são sugestões de evolução; não fazem parte do comportamento atual e não alteram o escopo do cenário entregue.

@@ -1,100 +1,196 @@
-# Controle de Notas
+# Controle de Notas — guia para começar
 
-Aplicação de janela para Windows, desenvolvida em Python com Tkinter/ttk e programação procedural para o trabalho de Programação 2 da UEMG, Unidade Carangola. Equipe indicada no enunciado: Gabriel da Silva, Samuel Pedrosa e Davi Gomes.
+Este programa ajuda a registrar as notas de uma turma e descobrir quem está **aprovado, em recuperação ou reprovado**. Ele abre em uma janela no Windows e permite escolher a quantidade de alunos, as avaliações e os critérios de pontuação.
 
-## Abrir o programa
+**A situação do aluno depende da soma das notas.** A média também aparece na tela para facilitar a consulta. Você não precisa saber programar para usar o aplicativo.
 
-Abra **`dist/ControleDeNotas.exe`** com duplo clique. O executável abre uma janela, sem console, e não requer Python instalado no computador de destino. A distribuição gerada é para Windows x64.
+## Escolha por onde começar
 
-Para executar pelo código-fonte, instale Python com Tcl/Tk e use, na pasta do projeto:
+| Quero… | Onde encontro |
+|---|---|
+| Abrir o programa e lançar notas | [Primeiro uso](#primeiro-uso-em-5-passos) |
+| Entender total, média e situação | [Exemplo completo](#um-exemplo-para-entender-os-resultados) |
+| Mudar os critérios da turma | [Configurações](#como-configurar-a-turma) |
+| Resolver uma dúvida de uso | [Dúvidas frequentes](#dúvidas-frequentes) |
+| Estudar ou alterar o código | [Guia de desenvolvimento](#para-quem-vai-estudar-ou-alterar-o-programa) |
+| Saber o que está pronto e o que pode vir depois | [ROADMAP.md](ROADMAP.md) |
+| Entender as decisões tomadas no projeto | [MEMORY.md](MEMORY.md) |
+
+## Primeiro uso em 5 passos
+
+1. Abra a pasta `dist` e dê dois cliques em **ControleDeNotas.exe**. Esse é o arquivo que inicia o programa. O executável fornecido é para Windows de 64 bits e não exige Python instalado.
+2. Clique em **Configurar turma e critérios** se precisar mudar a quantidade de alunos, avaliações ou pontos necessários. Os valores iniciais já permitem experimentar o sistema.
+3. Digite o nome e todas as notas de cada aluno. Você pode escrever `7,5` ou `7.5`: as duas formas são aceitas.
+4. Clique em **Calcular resultados**. Cada linha mostrará o total, a média e a situação do aluno. O painel abaixo apresenta o resumo da turma.
+5. Para começar outro preenchimento com as mesmas regras, clique em **Limpar** e confirme.
+
+> Os dados ficam guardados somente enquanto o programa está aberto. Ao sair, nomes, notas e configurações não são salvos. Aplicar uma mudança nas configurações também inicia uma turma vazia, após confirmação.
+
+Se a pasta `dist` ainda não estiver disponível, use o código Python ou gere o executável seguindo as instruções de desenvolvimento mais abaixo.
+
+## Um exemplo para entender os resultados
+
+Imagine três avaliações de 0 a 10 pontos, recuperação a partir de **12 pontos no total** e aprovação a partir de **18 pontos no total**.
+
+| Aluno | Nota 1 | Nota 2 | Nota 3 | Total | Média | Situação |
+|---|---:|---:|---:|---:|---:|---|
+| Ana | 8 | 7 | 9 | 24 | 8,00 | Aprovado |
+| Bruno | 4 | 5 | 6 | 15 | 5,00 | Recuperação |
+| Carla | 2 | 3 | 4 | 9 | 3,00 | Reprovado |
+
+Para Ana, o programa faz estas contas:
+
+```text
+Total = 8 + 7 + 9 = 24 pontos
+Média = 24 ÷ 3 = 8,00
+Situação = Aprovado, pois o total 24 é maior ou igual a 18
+```
+
+Os limites também contam: **12 pontos já dão direito à recuperação e 18 pontos já aprovam**. Um total abaixo de 12 reprova; de 12 até menos de 18 fica em recuperação.
+
+Para experimentar essa tabela no aplicativo, configure **3 alunos**. Se mantiver os 5 alunos iniciais, será necessário preencher os cinco antes de calcular.
+
+Nesse exemplo, o resumo terá 1 aprovado, 1 em recuperação, 1 reprovado, média da turma de **5,33**, maior média de **8,00** e menor média de **3,00**. A média da turma é a média das médias individuais, pois todos têm a mesma quantidade de avaliações.
+
+## Como configurar a turma
+
+Abra **Configurar turma e critérios** e preencha:
+
+| Campo | O que significa | Valor inicial |
+|---|---|---:|
+| Quantidade de alunos | Quantas linhas serão preenchidas | 5 |
+| Avaliações por aluno | Quantas notas cada aluno terá | 3 |
+| Nota mínima aceita | Menor valor permitido em cada avaliação | 0 |
+| Nota máxima aceita | Maior valor permitido em cada avaliação | 10 |
+| Nota total para recuperação | Soma mínima para ficar em recuperação | 12 |
+| Nota total para aprovação | Soma mínima para ficar aprovado | 18 |
+
+As quantidades aceitam números inteiros a partir de **1**, sem máximo fixado no código. Turmas maiores exigem mais memória e processamento do computador. Todos os alunos usam a mesma quantidade de avaliações e a mesma faixa de notas; todas as avaliações têm o mesmo peso.
+
+O total para recuperação precisa ser menor que o total para aprovação. Os dois devem caber na pontuação possível da turma. Por exemplo:
+
+```text
+4 avaliações, cada uma de 0 a 25 pontos
+Menor total possível = 4 × 0 = 0
+Maior total possível = 4 × 25 = 100
+
+Uma configuração válida:
+Recuperação a partir de 40 pontos
+Aprovação a partir de 60 pontos
+```
+
+Nesse caso, tentar configurar aprovação em 110 pontos gera um aviso, porque ninguém poderia alcançar esse total. A faixa de notas também pode incluir números negativos, se isso fizer sentido para a atividade.
+
+Ao mudar a quantidade de avaliações, revise os limites totais: o programa usa os valores que você informar, sem reajustá-los automaticamente.
+
+## Botões, atalhos e avisos
+
+| Ação | Como fazer | O que acontece |
+|---|---|---|
+| Calcular | **Calcular resultados** ou `Ctrl + Enter` | Confere o preenchimento e mostra os resultados |
+| Limpar | **Limpar** ou `Ctrl + L` | Apaga nomes, notas e resultados após confirmação; mantém os critérios |
+| Mudar as regras | **Configurar turma e critérios** | Permite definir uma nova turma |
+| Passar ao próximo campo | `Tab` | Move o cursor entre os controles |
+| Ver campos fora da tela | Barras de rolagem | Mostra mais alunos ou avaliações |
+| Fechar | **Sair** ou o `X` da janela | Pede confirmação quando há dados preenchidos |
+
+Se faltar um nome ou uma nota estiver incorreta, o programa mostra uma mensagem e direciona o cursor para o campo que precisa de correção. O contador de preenchimento ajuda a acompanhar o que já foi informado.
+
+## Dúvidas frequentes
+
+**Por que os resultados desapareceram quando editei uma nota?**
+
+Eles são retirados para evitar mostrar um resultado antigo. Clique em **Calcular resultados** novamente após terminar a edição.
+
+**Preciso preencher todas as linhas?**
+
+Sim. Se você tiver dois alunos, configure a turma com dois. Um campo vazio não é interpretado como zero; quando a nota for zero, digite `0`.
+
+**Posso colocar dois alunos com o mesmo nome?**
+
+Sim. O programa identifica cada aluno pela sua linha na turma.
+
+**A média é usada para aprovar?**
+
+A decisão usa o **total**. A média permanece na tela como informação: total dividido pela quantidade de avaliações.
+
+**O programa calcula a nota depois de uma prova de recuperação?**
+
+Ainda não. Ele identifica quem está em recuperação. Uma prova extra e uma nova nota final são possibilidades futuras, descritas no [planejamento](ROADMAP.md).
+
+**Quais notas são aceitas?**
+
+Números dentro da faixa configurada, com vírgula ou ponto decimal. Campos vazios, palavras, infinito e formatos como `1e2` são recusados. Cada entrada numérica pode ter até 30 caracteres.
+
+**O arredondamento muda a situação?**
+
+O programa compara o total antes de exibi-lo com duas casas decimais. Por exemplo, com aprovação em 18, um total exato de `17,999` aparece como `18,00`, mas continua abaixo do limite para aprovação.
+
+## Para quem vai estudar ou alterar o programa
+
+O projeto foi desenvolvido para Programação 2 da UEMG, Unidade Carangola. A equipe indicada no enunciado é formada por Gabriel da Silva, Samuel Pedrosa e Davi Gomes.
+
+O código segue o estilo **procedural**: funções dividem o trabalho em tarefas, como validar uma nota, calcular os resultados e montar a janela. A explicação das estruturas e das decisões está no [MEMORY.md](MEMORY.md).
+
+### Conheça os arquivos
+
+| Arquivo | Para que serve |
+|---|---|
+| [main.py](main.py) | Contém o programa e a interface de janela |
+| [testes.py](testes.py) | Verifica automaticamente cálculos e ações da interface |
+| [README.md](README.md) | Este guia de uso e primeiros passos |
+| [ROADMAP.md](ROADMAP.md) | Mostra o que está pronto, pendente ou proposto |
+| [MEMORY.md](MEMORY.md) | Explica as decisões para quem continuar o projeto |
+| [ia/Prompt Python.md](ia/Prompt%20Python.md) | Guarda as diretrizes pedagógicas originais |
+| [ia/continue.config.example.yaml](ia/continue.config.example.yaml) | Exemplo de configuração dos serviços de IA no VS Code |
+| [gerar_executavel.ps1](gerar_executavel.ps1) | Gera o arquivo `.exe` para Windows |
+| [requirements-dev.txt](requirements-dev.txt) | Indica a ferramenta necessária para gerar o `.exe` |
+| `.vscode/` | Configurações de execução e extensões sugeridas para o VS Code |
+| `dist/ControleDeNotas.exe` | Programa pronto para abrir com duplo clique, quando gerado |
+
+O PDF do enunciado e o prompt original também foram preservados na raiz do projeto. A pasta `dist` não é incluída automaticamente no Git, a ferramenta que registra as versões do código.
+
+### Executar pelo código
+
+É necessário ter Python com suporte a Tkinter, a biblioteca que desenha a janela. No VS Code, abra a pasta do projeto e vá ao menu **Terminal → Novo Terminal**. Execute:
 
 ```powershell
 python main.py
 ```
 
-No VS Code, também é possível pressionar F5 e escolher **Controle de Notas (Tkinter)**. A aplicação não usa APIs de IA, internet ou pacotes externos durante seu funcionamento.
+Também há uma configuração para executar com `F5`, chamada **Controle de Notas (Tkinter)**. O aplicativo funciona sem internet, sem chaves de IA e sem instalar pacotes adicionais para o uso comum.
 
-## Usar e configurar
+### Conferir o funcionamento e gerar o executável
 
-1. Use **Configurar turma e critérios** para escolher a quantidade de alunos e avaliações, a faixa de cada nota e as pontuações totais para recuperação e aprovação.
-2. Preencha o nome e todas as notas de cada aluno. Aceitam-se vírgula ou ponto como separador decimal.
-3. Clique em **Calcular Resultados** ou pressione Ctrl+Enter.
-4. Consulte a nota total, a média individual, as situações **Aprovado**, **Recuperação** ou **Reprovado** e o resumo da turma.
-5. Use **Limpar** (Ctrl+L) para uma nova turma com os mesmos critérios.
-
-Os valores iniciais usam 5 alunos, 3 avaliações e notas de 0 a 10. Com essa configuração, o total inicial para recuperação é 12 e o total para aprovação é 18. **Todos esses valores são editáveis.** A turma e a quantidade de avaliações precisam ser de pelo menos 1, mas não possuem máximo programado; a capacidade prática depende dos recursos do computador. A faixa pode incluir valores negativos quando a área exigir.
-
-O programa calcula automaticamente o menor e o maior total possíveis multiplicando a quantidade de avaliações pela nota mínima e pela nota máxima. Os critérios configurados devem respeitar:
-
-```text
-menor total possível ≤ total de recuperação < total de aprovação ≤ maior total possível
-```
-
-Por exemplo, com três avaliações de 0 a 10, o total possível vai de 0 a 30. Configurando recuperação em 12 e aprovação em 18, um total 17 fica em recuperação e um total 18 fica aprovado.
-
-Alterar a configuração pede confirmação e inicia uma turma vazia. A interface tem rolagem horizontal e vertical para mais avaliações/alunos; Tab percorre e revela os campos. Os dados e as configurações são mantidos somente na memória durante a sessão. Fechar o programa perde o preenchimento, com confirmação quando houver dados.
-
-## Regras de cálculo
-
-- Nota total: soma de todas as avaliações do aluno.
-- Aprovado: nota total igual ou superior ao total configurado para aprovação.
-- Recuperação: nota total igual ou superior ao total de recuperação e inferior ao total de aprovação.
-- Reprovado: nota total inferior ao total de recuperação.
-- Média individual: nota total dividida pela quantidade de avaliações, com pesos iguais. A média é informativa e não altera a situação.
-- A classificação usa o total exato antes da formatação visual.
-- Média da turma: soma de todas as notas dividida pelo total de notas; equivale à média das médias porque todos têm a mesma quantidade de avaliações.
-- Resumo: média da turma, números de aprovados, alunos em recuperação e reprovados, além da maior e menor média individual.
-- Totais e médias são exibidos com duas casas decimais.
-
-Entradas vazias, textos, NaN, infinito, notação científica e notas fora da faixa são recusados. Todos os alunos precisam estar preenchidos para calcular a turma. Ao editar qualquer campo, os resultados anteriores deixam de ser exibidos até novo cálculo. Nomes iguais são permitidos, pois a associação é feita pela posição na turma.
-
-## Estrutura
-
-```text
-Controle-de-notas-/
-├── MEMORY.md
-├── ROADMAP.md
-├── README.md
-├── main.py
-├── testes.py
-├── requirements-dev.txt
-├── gerar_executavel.ps1
-├── .vscode/
-│   ├── extensions.json
-│   └── launch.json
-├── ia/
-│   ├── Prompt Python.md
-│   └── continue.config.example.yaml
-└── dist/
-    └── ControleDeNotas.exe
-```
-
-Os documentos originais foram preservados na raiz. `dist/`, `build/` e arquivos temporários não são versionados. Para entregar somente o programa, copie o `.exe`; para entregar o trabalho acadêmico, inclua o código e os documentos.
-
-## Estruturas e diretrizes pedagógicas
-
-`alunos` é um vetor de nomes; `notas` é uma matriz cujas linhas correspondem aos mesmos índices do vetor. As dimensões seguem a configuração, sem teto fixo no programa. Entradas inválidas ou vazias são representadas por `None` na matriz, nunca por zero implícito.
-
-Não há definição de classes próprias. Funções organizam validação, cálculos, renderização, configuração, limpeza e encerramento. Laços percorrem a matriz, acumulam notas, contam situações e procuram extremos. Comentários explicam sequência, seleção, repetição e métodos utilitários. Objetos da biblioteca padrão (Tkinter e Decimal) são usados conforme necessário; não há objetos personalizados.
-
-## Testar e gerar o executável
+No terminal, dentro da pasta do projeto:
 
 ```powershell
 python testes.py
+```
+
+Esse comando verifica os totais, as médias, as situações e operações da interface. Se tudo passar, aparece uma mensagem começando com `OK`. É necessária uma sessão com interface gráfica para os testes de janela.
+
+Para criar ou atualizar o executável no Windows:
+
+```powershell
 powershell -ExecutionPolicy Bypass -File .\gerar_executavel.ps1
 ```
 
-O script instala a dependência de empacotamento, executa os testes e usa PyInstaller com `--onefile --windowed`. Execute-o no Windows. A opção de política vale somente para essa chamada do PowerShell. O programa em si utiliza apenas a biblioteca padrão. Os testes de interface precisam de uma sessão gráfica com Tkinter.
+O script prepara a ferramenta PyInstaller, executa os testes e gera `dist/ControleDeNotas.exe`. PyInstaller reúne o programa e os componentes necessários em um arquivo executável. A instalação da ferramenta pode precisar de internet; a opção `ExecutionPolicy Bypass` vale apenas para essa chamada do PowerShell.
 
-## Gemini e OpenRouter no VS Code
+Após alterar o código, gere o `.exe` novamente para que ele contenha as mudanças. Para entregar apenas o aplicativo, copie o `.exe`; para entregar o trabalho acadêmico, inclua também o código e a documentação.
 
-A extensão **Continue** foi instalada no ambiente de desenvolvimento e consta nas recomendações do projeto. A autenticação nas APIs precisa das chaves pessoais do usuário e não foi realizada. O exemplo `ia/continue.config.example.yaml` contém os dois provedores, sem credenciais.
+### IA no VS Code: Gemini e OpenRouter
 
-1. Abra a pasta do projeto no VS Code e acesse a extensão Continue.
-2. Abra a configuração YAML pessoal pelo menu de configuração da extensão.
-3. Incorpore os blocos de `ia/continue.config.example.yaml`, preservando modelos que você já tiver configurado.
-4. Informe os IDs de modelos disponíveis nas suas contas e as chaves obtidas no [Google AI Studio](https://aistudio.google.com/apikey) e no [OpenRouter](https://openrouter.ai/keys), apenas na configuração pessoal. Não grave chaves no repositório.
-5. Selecione cada modelo e faça uma pergunta curta para validar o acesso. Disponibilidade, cotas e cobrança dependem do provedor/conta.
-6. Para trabalhar no código, forneça ao chat `ia/Prompt Python.md`, o cenário do PDF e `MEMORY.md`; destaque que as quantidades e critérios agora são configuráveis.
+Esses serviços ajudam durante a programação. O aplicativo de notas funciona independentemente deles.
 
-A sintaxe dos provedores foi conferida na documentação oficial do Continue para [Gemini](https://docs.continue.dev/customize/model-providers/top-level/gemini) e [OpenRouter](https://docs.continue.dev/customize/model-providers/top-level/openrouter). A conexão só estará validada depois de uma resposta bem-sucedida de cada API.
+A extensão **Continue** foi instalada no ambiente de desenvolvimento e existe um [exemplo de configuração](ia/continue.config.example.yaml). A conexão às duas APIs ainda depende das chaves pessoais do usuário e de uma chamada de teste bem-sucedida. **API** é a forma de um programa se comunicar com um serviço; a **chave de API** identifica o acesso da sua conta.
+
+1. Abra a extensão Continue no VS Code e acesse sua configuração pessoal em YAML, um arquivo de texto com opções organizadas.
+2. Acrescente os blocos do exemplo, preservando os modelos que você já utiliza.
+3. Substitua os textos `SUBSTITUA_...` pelos identificadores dos modelos disponíveis na sua conta e pelas chaves pessoais do [Google AI Studio](https://aistudio.google.com/apikey) e do [OpenRouter](https://openrouter.ai/keys).
+4. Guarde as chaves somente na configuração pessoal. Não as coloque nos arquivos compartilhados do projeto.
+5. Selecione cada modelo e faça uma pergunta curta para confirmar que os dois acessos funcionam.
+6. Ao pedir ajuda com o código, forneça `ia/Prompt Python.md` e `MEMORY.md` como contexto, além do cenário do trabalho.
+
+Para consultar a configuração de cada serviço, use a documentação do Continue para [Gemini](https://docs.continue.dev/customize/model-providers/top-level/gemini) e [OpenRouter](https://docs.continue.dev/customize/model-providers/top-level/openrouter). Modelos disponíveis, limites de uso e cobrança dependem de cada conta.

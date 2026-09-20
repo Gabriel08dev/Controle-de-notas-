@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+build/
+dist/
+tmp/
+*.spec
+.env
+.env.*
+!.env.example
+ia/config.local.yaml

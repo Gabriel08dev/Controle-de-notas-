@@ -1,0 +1,14 @@
+# Exemplo: substituir modelos e chaves apenas na configuração pessoal do Continue.
+name: Controle de Notas - IA
+version: 1.0.0
+schema: v1
+models:
+  - name: Gemini
+    provider: gemini
+    model: SUBSTITUA_PELO_ID_DO_MODELO_GEMINI
+    apiKey: SUBSTITUA_PELA_CHAVE_GEMINI
+  - name: OpenRouter
+    provider: openrouter
+    model: SUBSTITUA_PELO_ID_DO_MODELO_OPENROUTER
+    apiBase: https://openrouter.ai/api/v1
+    apiKey: SUBSTITUA_PELA_CHAVE_OPENROUTER

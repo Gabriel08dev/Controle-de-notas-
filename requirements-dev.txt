@@ -1,0 +1,2 @@
+# Dependência apenas para gerar o executável. A aplicação usa a biblioteca padrão.
+pyinstaller==6.22.3

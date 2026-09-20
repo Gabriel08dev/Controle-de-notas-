@@ -9,6 +9,7 @@ Este programa ajuda a registrar as notas de uma turma e descobrir quem está **a
 | Quero… | Onde encontro |
 |---|---|
 | Abrir o programa e lançar notas | [Primeiro uso](#primeiro-uso-em-5-passos) |
+| Conhecer a organização da janela | [Uma tela mais acolhedora](#uma-tela-mais-acolhedora) |
 | Entender total, média e situação | [Exemplo completo](#um-exemplo-para-entender-os-resultados) |
 | Mudar os critérios da turma | [Configurações](#como-configurar-a-turma) |
 | Resolver uma dúvida de uso | [Dúvidas frequentes](#dúvidas-frequentes) |
@@ -27,6 +28,17 @@ Este programa ajuda a registrar as notas de uma turma e descobrir quem está **a
 > Os dados ficam guardados somente enquanto o programa está aberto. Ao sair, nomes, notas e configurações não são salvos. Aplicar uma mudança nas configurações também inicia uma turma vazia, após confirmação.
 
 Se a pasta `dist` ainda não estiver disponível, use o código Python ou gere o executável seguindo as instruções de desenvolvimento mais abaixo.
+
+## Uma tela mais acolhedora
+
+O fundo creme claro e o cabeçalho verde sálvia deixam a janela mais suave. Os cantos arredondados e os campos mais espaçosos ajudam a encontrar onde digitar e onde consultar os resultados.
+
+- **Comece pelo cabeçalho:** ele apresenta a turma e o acesso às configurações.
+- **Preencha a área central:** cada aluno ocupa uma linha, com nome, notas e resultados.
+- **Confira o resumo abaixo:** ele reúne as médias e a quantidade de alunos em cada situação.
+- **Use o teclado se preferir:** `Tab` passa entre os controles; um contorno indica o botão selecionado, que pode ser acionado com `Enter` ou `Espaço`.
+
+O tamanho inicial da janela se adapta à tela do computador. As barras de rolagem permitem acessar alunos e avaliações que não couberem na área visível.
 
 ## Um exemplo para entender os resultados
 

@@ -15,6 +15,23 @@ TOTAL_RECUPERACAO = Decimal("12")
 NOTA_MINIMA = Decimal("0")
 NOTA_MAXIMA = Decimal("10")
 
+# Paleta única: trocar uma cor aqui mantém a janela e os diálogos consistentes.
+CORES = {
+    "fundo": "#F5F6F2",
+    "superficie": "#FFFFFF",
+    "cabecalho": "#557A68",
+    "texto": "#26332D",
+    "secundario": "#65726B",
+    "acao": "#4F76A7",
+    "acao_hover": "#43668F",
+    "suave": "#E7EBE7",
+    "suave_hover": "#DCE3DE",
+    "borda": "#D6DDD8",
+    "aprovado": "#3D805C",
+    "recuperacao": "#9F681E",
+    "reprovado": "#B75050",
+}
+
 # Repetição: construir linhas independentes evita compartilhar a mesma lista.
 alunos = ["", "", "", "", ""]
 notas = []
@@ -367,8 +384,8 @@ def abrir_configuracoes():
             )
             linha += 1
         # Label/Entry e grid constroem cada linha do formulário de configuração.
-        ttk.Label(painel, text=titulo).grid(row=linha, column=0, sticky="w", padx=(0, 20), pady=7)
-        entrada = ttk.Entry(painel, width=20)
+        ttk.Label(painel, text=titulo, style="Formulario.TLabel").grid(row=linha, column=0, sticky="w", padx=(0, 20), pady=7)
+        entrada = ttk.Entry(painel, width=20, font=("Segoe UI", 11), style="Suave.TEntry")
         entrada.grid(row=linha, column=1, sticky="ew", pady=7)
         # str formata o valor; insert coloca o texto; append guarda a referência.
         entrada.insert(0, str(valor))
@@ -419,12 +436,12 @@ def abrir_configuracoes():
     # Button/grid criam comandos; destroy encerra apenas esta janela de opções.
     ttk.Label(
         painel,
-        text="A situação usa a soma: reprovado < recuperação < aprovação.",
+        text="O total das notas define a situação. A média fica disponível para consulta.",
         style="Ajuda.TLabel",
     ).grid(row=linha, column=0, columnspan=2, sticky="w", pady=(14, 4))
     ttk.Label(
         painel,
-        text="Aplicar uma mudança inicia uma turma vazia. Não há limite máximo programado.",
+        text="Ao aplicar novos critérios, você começa uma turma vazia.",
         style="Ajuda.TLabel",
     ).grid(row=linha + 1, column=0, columnspan=2, sticky="w", pady=(0, 16))
     botoes = ttk.Frame(painel, style="Pagina.TFrame")
@@ -464,12 +481,12 @@ def desenhar_retangulo_arredondado(canvas, x1, y1, x2, y2, raio, cor, etiqueta):
     )
 
 
-def criar_cartao_arredondado(pai, altura, cor="#ffffff", margem=16, raio=18):
+def criar_cartao_arredondado(pai, altura, cor=CORES["superficie"], margem=16, raio=18):
     """Criar um cartão visual que recebe widgets Tkinter em seu interior."""
     canvas = tk.Canvas(
         pai,
         height=altura,
-        background="#f5f7fb",
+        background=CORES["fundo"],
         highlightthickness=0,
         borderwidth=0,
     )
@@ -527,6 +544,7 @@ def criar_botao_arredondado(
 
     def executar(evento=None):
         comando()
+        return "break"
 
     def entrar(evento=None):
         # itemconfigure altera a cor do desenho existente durante o foco do mouse.
@@ -535,12 +553,22 @@ def criar_botao_arredondado(
     def sair(evento=None):
         botao.itemconfigure(fundo, fill=cor)
 
+    def destacar_foco(evento=None):
+        # itemconfigure contorna o botão ao receber foco, tornando o Tab visível.
+        botao.itemconfigure(fundo, outline=CORES["acao"], width=2)
+
+    def retirar_foco(evento=None):
+        # itemconfigure remove apenas o contorno, mantendo a cor da ação.
+        botao.itemconfigure(fundo, outline="", width=0)
+
     # bind associa clique, teclado e realce sem criar uma classe personalizada.
     botao.bind("<Button-1>", executar)
     botao.bind("<Return>", executar)
     botao.bind("<space>", executar)
     botao.bind("<Enter>", entrar)
     botao.bind("<Leave>", sair)
+    botao.bind("<FocusIn>", destacar_foco)
+    botao.bind("<FocusOut>", retirar_foco)
     return botao
 
 
@@ -568,7 +596,7 @@ def criar_interface():
     janela.geometry("1180x760")
     janela.minsize(960, 650)
     # configure define a cor ao redor do conteúdo, evitando áreas sem acabamento.
-    janela.configure(background="#eef2f7")
+    janela.configure(background="#F5F6F2")
     # Style controla a renderização nativa dos widgets; theme_names lista temas.
     estilo = ttk.Style(janela)
     # in faz uma busca sequencial pelo tema, substituindo um laço de comparação.
@@ -576,28 +604,28 @@ def criar_interface():
         # theme_use aplica o conjunto de regras visuais nativas do Windows.
         estilo.theme_use("vista")
     # configure define atributos compartilhados, evitando configurar cada rótulo.
-    estilo.configure("Pagina.TFrame", background="#f5f7fb")
-    estilo.configure("Cabecalho.TFrame", background="#173f5f")
-    estilo.configure("Titulo.TLabel", font=("Segoe UI", 22, "bold"), foreground="#ffffff", background="#173f5f")
-    estilo.configure("SubtituloCabecalho.TLabel", font=("Segoe UI", 10), foreground="#d8e7f3", background="#173f5f")
-    estilo.configure("Subtitulo.TLabel", font=("Segoe UI", 10), foreground="#526074", background="#f5f7fb")
-    estilo.configure("DialogoTitulo.TLabel", font=("Segoe UI", 17, "bold"), foreground="#173f5f", background="#f5f7fb")
-    estilo.configure("Secao.TLabel", font=("Segoe UI", 9, "bold"), foreground="#2f6b8a", background="#f5f7fb")
-    estilo.configure("Ajuda.TLabel", font=("Segoe UI", 9), foreground="#667587", background="#f5f7fb")
-    estilo.configure("Tabela.TFrame", background="#ffffff")
-    estilo.configure("Cartao.TFrame", background="#ffffff")
-    estilo.configure("Tabela.TLabel", background="#ffffff", foreground="#273444")
-    estilo.configure("CartaoTitulo.TLabel", background="#ffffff", foreground="#173f5f", font=("Segoe UI", 12, "bold"))
-    estilo.configure("CartaoTexto.TLabel", background="#ffffff", foreground="#667587", font=("Segoe UI", 9))
-    estilo.configure("Cabecalho.TLabel", background="#ffffff", font=("Segoe UI", 10, "bold"))
-    estilo.configure("Valor.TLabel", background="#ffffff", font=("Segoe UI", 22, "bold"))
-    estilo.configure("AprovadoValor.TLabel", background="#ffffff", foreground="#176138", font=("Segoe UI", 22, "bold"))
-    estilo.configure("RecuperacaoValor.TLabel", background="#ffffff", foreground="#9a5b00", font=("Segoe UI", 22, "bold"))
-    estilo.configure("ReprovadoValor.TLabel", background="#ffffff", foreground="#a32424", font=("Segoe UI", 22, "bold"))
-    estilo.configure("Aprovado.TLabel", background="#ffffff", foreground="#176138", font=("Segoe UI", 10, "bold"))
-    estilo.configure("Recuperação.TLabel", background="#ffffff", foreground="#9a5b00", font=("Segoe UI", 10, "bold"))
-    estilo.configure("Reprovado.TLabel", background="#ffffff", foreground="#a32424", font=("Segoe UI", 10, "bold"))
-    estilo.configure("Pendente.TLabel", background="#ffffff", foreground="#526074")
+    estilo.configure("Pagina.TFrame", background="#F5F6F2")
+    estilo.configure("Cabecalho.TFrame", background="#557A68")
+    estilo.configure("Titulo.TLabel", font=("Segoe UI", 22, "bold"), foreground="#FFFFFF", background="#557A68")
+    estilo.configure("SubtituloCabecalho.TLabel", font=("Segoe UI", 10), foreground="#EEF3F0", background="#557A68")
+    estilo.configure("Subtitulo.TLabel", font=("Segoe UI", 10), foreground="#65726B", background="#F5F6F2")
+    estilo.configure("DialogoTitulo.TLabel", font=("Segoe UI", 17, "bold"), foreground="#557A68", background="#F5F6F2")
+    estilo.configure("Secao.TLabel", font=("Segoe UI", 9, "bold"), foreground="#557A68", background="#F5F6F2")
+    estilo.configure("Ajuda.TLabel", font=("Segoe UI", 9), foreground="#65726B", background="#F5F6F2")
+    estilo.configure("Tabela.TFrame", background="#FFFFFF")
+    estilo.configure("Cartao.TFrame", background="#FFFFFF")
+    estilo.configure("Tabela.TLabel", background="#FFFFFF", foreground="#26332D")
+    estilo.configure("CartaoTitulo.TLabel", background="#FFFFFF", foreground="#557A68", font=("Segoe UI", 12, "bold"))
+    estilo.configure("CartaoTexto.TLabel", background="#FFFFFF", foreground="#65726B", font=("Segoe UI", 9))
+    estilo.configure("Cabecalho.TLabel", background="#FFFFFF", font=("Segoe UI", 10, "bold"))
+    estilo.configure("Valor.TLabel", background="#FFFFFF", font=("Segoe UI", 22, "bold"))
+    estilo.configure("AprovadoValor.TLabel", background="#FFFFFF", foreground="#3D805C", font=("Segoe UI", 22, "bold"))
+    estilo.configure("RecuperacaoValor.TLabel", background="#FFFFFF", foreground="#9F681E", font=("Segoe UI", 22, "bold"))
+    estilo.configure("ReprovadoValor.TLabel", background="#FFFFFF", foreground="#B75050", font=("Segoe UI", 22, "bold"))
+    estilo.configure("Aprovado.TLabel", background="#FFFFFF", foreground="#3D805C", font=("Segoe UI", 10, "bold"))
+    estilo.configure("Recuperação.TLabel", background="#FFFFFF", foreground="#9F681E", font=("Segoe UI", 10, "bold"))
+    estilo.configure("Reprovado.TLabel", background="#FFFFFF", foreground="#B75050", font=("Segoe UI", 10, "bold"))
+    estilo.configure("Pendente.TLabel", background="#FFFFFF", foreground="#65726B")
     estilo.configure("TButton", padding=(12, 7))
     estilo.configure("Destaque.TButton", font=("Segoe UI", 10, "bold"), padding=(14, 8))
     # columnconfigure/rowconfigure distribuem espaço extra; grid posiciona widgets.
@@ -609,7 +637,7 @@ def criar_interface():
     conteudo.rowconfigure(1, weight=1)
     # Um cartão arredondado mantém título, regras e configuração no mesmo bloco.
     cabecalho_canvas, cabecalho = criar_cartao_arredondado(
-        conteudo, altura=108, cor="#173f5f", margem=20, raio=24
+        conteudo, altura=108, cor="#557A68", margem=20, raio=24
     )
     cabecalho_canvas.grid(row=0, column=0, sticky="ew", padx=24, pady=(20, 0))
     cabecalho.columnconfigure(0, weight=1)
@@ -628,15 +656,15 @@ def criar_interface():
         "Configurar turma e critérios",
         abrir_configuracoes,
         220,
-        "#ffffff",
-        "#173f5f",
-        "#dceaf3",
-        "#173f5f",
+        "#FFFFFF",
+        "#557A68",
+        "#E4ECE8",
+        "#557A68",
     )
     botao_configurar.grid(row=0, column=1, rowspan=2, padx=(24, 0))
     # O formulário ocupa um único cartão branco, sem moldura quadrada externa.
     tabela_canvas, area_tabela = criar_cartao_arredondado(
-        conteudo, altura=315, cor="#ffffff", margem=16, raio=22
+        conteudo, altura=315, cor="#FFFFFF", margem=16, raio=22
     )
     tabela_canvas.grid(row=1, column=0, sticky="nsew", padx=24, pady=(14, 0))
     area_tabela.columnconfigure(0, weight=1)
@@ -645,7 +673,7 @@ def criar_interface():
         row=0, column=0, sticky="w", pady=(0, 10)
     )
     # Canvas fornece uma área rolável; Scrollbar delega o deslocamento ao Tk.
-    tela = tk.Canvas(area_tabela, highlightthickness=0, height=225, background="#ffffff")
+    tela = tk.Canvas(area_tabela, highlightthickness=0, height=225, background="#FFFFFF")
     tela.grid(row=1, column=0, sticky="nsew")
     vertical = ttk.Scrollbar(area_tabela, orient="vertical", command=tela.yview)
     vertical.grid(row=1, column=1, sticky="ns")
@@ -733,7 +761,7 @@ def criar_interface():
         rotulos_situacoes.append(situacao)
     # Um único cartão de resumo evita seis caixas separadas na tela.
     painel_canvas, painel = criar_cartao_arredondado(
-        conteudo, altura=112, cor="#ffffff", margem=14, raio=22
+        conteudo, altura=112, cor="#FFFFFF", margem=14, raio=22
     )
     painel_canvas.grid(row=2, column=0, sticky="ew", padx=24, pady=(14, 8))
     indicadores = [
@@ -772,23 +800,23 @@ def criar_interface():
         style="Subtitulo.TLabel",
         wraplength=1080,
     ).grid(row=3, column=0, sticky="w", padx=26, pady=(0, 10))
-    acoes = tk.Frame(conteudo, background="#f5f7fb", borderwidth=0)
+    acoes = tk.Frame(conteudo, background="#F5F6F2", borderwidth=0)
     acoes.grid(row=4, column=0, sticky="ew", padx=24)
     acoes.columnconfigure(2, weight=1)
     # Botões em Canvas mantêm as ações principais arredondadas e sem caixas duras.
     botao_calcular = criar_botao_arredondado(
         acoes, "Calcular resultados", processar_resultados, 180,
-        "#1f6f8b", "#ffffff", "#185a70", "#f5f7fb"
+        "#4F76A7", "#FFFFFF", "#43668F", "#F5F6F2"
     )
     botao_calcular.grid(row=0, column=0, padx=(0, 8))
     botao_limpar = criar_botao_arredondado(
         acoes, "Limpar", limpar_dados, 100,
-        "#e4eaf0", "#273444", "#d3dde6", "#f5f7fb"
+        "#E7EBE7", "#26332D", "#DCE3DE", "#F5F6F2"
     )
     botao_limpar.grid(row=0, column=1)
     botao_sair = criar_botao_arredondado(
         acoes, "Sair", encerrar, 92,
-        "#e4eaf0", "#273444", "#d3dde6", "#f5f7fb"
+        "#E7EBE7", "#26332D", "#DCE3DE", "#F5F6F2"
     )
     botao_sair.grid(row=0, column=3)
     # StringVar e Label propagam o texto de estado sem reconstruir o rótulo.

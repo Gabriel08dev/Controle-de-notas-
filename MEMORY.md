@@ -31,6 +31,7 @@ O cenário inicial tinha cinco alunos, três avaliações e aprovação pela mé
 | Deixar a janela mais arredondada | Usar cartões e botões arredondados e reduzir as molduras |
 | Classificar pelo total, mantendo a média | Comparar a soma com os totais configurados; continuar mostrando a média |
 | Tornar a documentação fácil de entender | Usar exemplos, tabelas, passos de uso e explicações de termos técnicos |
+| Deixar o fundo e o layout mais amigáveis | Adotar creme claro, verde sálvia, campos espaçosos e indicação de foco pelo teclado |
 
 **Essas orientações posteriores definem o comportamento atual.** Ao alterar o código, não volte a fixar cinco alunos ou a usar a média para classificar.
 
@@ -130,6 +131,14 @@ As opções da turma são guardadas em variáveis de configuração:
 | `QUANTIDADE_NOTAS` | Número de avaliações por aluno |
 | `NOTA_MINIMA` e `NOTA_MAXIMA` | Menor e maior nota aceitas por avaliação |
 | `TOTAL_RECUPERACAO` e `TOTAL_APROVACAO` | Totais necessários para cada faixa de situação |
+
+## Escolhas para uma janela mais amigável
+
+O fundo creme claro e o cabeçalho verde sálvia criam uma aparência suave. Os textos escuros facilitam a leitura; os campos mais espaçosos e os cantos arredondados organizam o preenchimento. A situação continua escrita por extenso, para que a pessoa não precise distinguir as cores para entender o resultado.
+
+Ao navegar com `Tab`, o botão selecionado recebe um contorno. Isso é o **foco do teclado**: a indicação de qual controle receberá a próxima ação. O tamanho inicial da janela se adapta à tela, e a tabela mantém a rolagem para turmas maiores.
+
+Ao alterar esse visual novamente, confira as cores do fundo e dos cartões em conjunto, mantenha o foco visível e verifique se os textos e botões cabem em uma tela menor. Esta decisão visual não altera as regras de cálculo.
 
 ## Por que o código usa funções e repetições
 

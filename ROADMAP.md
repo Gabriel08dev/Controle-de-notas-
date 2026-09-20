@@ -54,6 +54,19 @@ As versões abaixo organizam o trabalho. **Não há datas de entrega definidas p
 
 > O aplicativo atual guarda o preenchimento apenas enquanto está aberto. Salvar turmas em arquivo é uma proposta da próxima etapa.
 
+## Ajuste visual desta etapa
+
+**Objetivo:** tornar a janela mais acolhedora e facilitar o preenchimento das notas.
+
+| Melhoria visual | Benefício para quem usa |
+|---|---|
+| Fundo creme claro e cabeçalho verde sálvia | Criar uma aparência suave, com textos fáceis de distinguir |
+| Campos mais espaçosos e cantos arredondados | Facilitar a identificação das áreas de preenchimento |
+| Contorno no botão selecionado pelo teclado | Mostrar onde a pessoa está ao navegar com `Tab` |
+| Tamanho inicial adaptado à tela | Melhorar o uso em computadores com telas de tamanhos diferentes |
+
+A conferência desta etapa deve incluir a leitura dos textos, o acesso aos botões em uma tela menor e a navegação pelo teclado. Os cálculos continuam usando o total para definir a situação e exibindo a média para consulta.
+
 ## Pendência do ambiente de programação
 
 - [x] Instalar a extensão Continue no ambiente de desenvolvimento.

@@ -28,10 +28,12 @@ As versões abaixo organizam o trabalho. **Não há datas de entrega definidas p
 ### Preencher e configurar
 
 - [x] Abrir o aplicativo em uma janela do Windows.
-- [x] Escolher a quantidade de alunos e avaliações, a partir de 1 e sem máximo fixado no código.
-- [x] Definir a menor e a maior nota aceita em cada avaliação.
-- [x] Definir os totais necessários para recuperação e aprovação.
-- [x] Avisar quando faltam dados ou uma nota está fora da faixa permitida.
+- [x] Escolher a quantidade de alunos e de notas por aluno, a partir de 1 e sem máximo rígido no código.
+- [x] Definir a nota máxima total do sistema.
+- [x] Definir a nota mínima para aprovação e a nota mínima para fazer recuperação.
+- [x] Mostrar uma prévia, em tempo real, das três faixas de classificação.
+- [x] Avisar quando faltam dados, uma nota é inválida ou a soma ultrapassa a nota máxima.
+- [x] Alertar antes de criar uma configuração com mais de 2.000 campos de nota, sem impedir que o usuário prossiga.
 
 ### Calcular e acompanhar
 
@@ -64,8 +66,10 @@ As versões abaixo organizam o trabalho. **Não há datas de entrega definidas p
 | Campos mais espaçosos e cantos arredondados | Facilitar a identificação das áreas de preenchimento |
 | Contorno no botão selecionado pelo teclado | Mostrar onde a pessoa está ao navegar com `Tab` |
 | Tamanho inicial adaptado à tela | Melhorar o uso em computadores com telas de tamanhos diferentes |
+| Critérios completos no cabeçalho | Evitar que as faixas de recuperação e aprovação pareçam se sobrepor |
+| Barras de rolagem exibidas quando necessárias | Aproveitar melhor o espaço sem perder acesso a turmas maiores |
 
-A conferência desta etapa deve incluir a leitura dos textos, o acesso aos botões em uma tela menor e a navegação pelo teclado. Os cálculos continuam usando o total para definir a situação e exibindo a média para consulta.
+A etapa foi conferida com a janela principal em tamanho reduzido e com o diálogo de configuração aberto. Os cinco alunos iniciais, os textos, os botões e a prévia permaneceram acessíveis. Os testes automatizados também confirmam que o total define a situação e que a média continua disponível para consulta.
 
 ## Pendência do ambiente de programação
 

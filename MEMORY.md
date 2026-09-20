@@ -12,7 +12,7 @@ Para aprender a usar o aplicativo, leia o [README.md](README.md). Para acompanha
 | O que decide a situação? | A soma total das avaliações |
 | A média continua existindo? | Sim, como informação individual e no resumo da turma |
 | Quais situações existem? | Aprovado, Recuperação e Reprovado |
-| O que pode ser configurado? | Quantidades de alunos e avaliações, faixa de notas e totais para recuperação e aprovação |
+| O que pode ser configurado? | Quantidade de alunos, notas por aluno, nota máxima do sistema e notas mínimas para aprovação e recuperação |
 | Os dados ficam salvos ao sair? | Não. Eles existem apenas durante a sessão aberta |
 | Qual tecnologia é usada? | Python, com Tkinter e ttk para construir a janela |
 | Onde está o código? | No arquivo [main.py](main.py), organizado em funções |
@@ -30,6 +30,7 @@ O cenário inicial tinha cinco alunos, três avaliações e aprovação pela mé
 | Incluir recuperação | Criar uma faixa entre reprovação e aprovação |
 | Deixar a janela mais arredondada | Usar cartões e botões arredondados e reduzir as molduras |
 | Classificar pelo total, mantendo a média | Comparar a soma com os totais configurados; continuar mostrando a média |
+| Simplificar a configuração das notas | Usar uma nota máxima total do sistema e duas notas mínimas: aprovação e recuperação |
 | Tornar a documentação fácil de entender | Usar exemplos, tabelas, passos de uso e explicações de termos técnicos |
 | Deixar o fundo e o layout mais amigáveis | Adotar creme claro, verde sálvia, campos espaçosos e indicação de foco pelo teclado |
 
@@ -37,7 +38,7 @@ O cenário inicial tinha cinco alunos, três avaliações e aprovação pela mé
 
 ## Como a regra atual funciona
 
-O programa soma todas as notas de cada aluno e compara o resultado com dois limites configuráveis.
+O programa soma todas as notas de cada aluno e compara o resultado com dois limites configuráveis. A soma deve ficar entre zero e a nota máxima do sistema.
 
 | Total do aluno | Situação |
 |---|---|
@@ -55,9 +56,9 @@ Média: 15 ÷ 3 = 5
 Situação: Recuperação, porque 15 está entre 12 e menos de 18.
 ```
 
-Todas as avaliações têm o mesmo peso. O programa ainda não trata frequência, prova extra de recuperação ou uma nova nota final após essa prova.
+Cada campo contribui para a soma com o valor digitado. O programa ainda não trata pesos, frequência, prova extra de recuperação ou uma nova nota final após essa prova.
 
-Os limites precisam caber nos totais possíveis. Com três avaliações de 0 a 10, o total vai de 0 a 30; portanto, um limite de aprovação de 40 seria inválido.
+Os dois limites precisam ficar entre zero e a nota máxima do sistema, e a recuperação deve começar antes da aprovação. Com nota máxima 30, recuperação em 12 e aprovação em 18, a configuração é válida. Uma soma de 31 é recusada, mesmo que cada nota isolada esteja entre zero e 30.
 
 ## Como os dados são organizados
 
@@ -95,10 +96,11 @@ Uma **função** é um bloco de código com uma tarefa específica. Os nomes aba
 | Função ou grupo | Tarefa explicada de forma simples |
 |---|---|
 | `converter_decimal` | Transformar um texto como `7,5` em um número |
-| `validar_nota` | Conferir se a nota está na faixa permitida |
-| `validar_configuracao` | Conferir quantidades, faixa das notas e limites totais |
+| `validar_nota` | Conferir se cada nota está entre zero e a nota máxima do sistema |
+| `validar_configuracao` | Conferir quantidades, nota máxima e as duas notas mínimas |
 | `calcular_resultados` | Somar, calcular médias e classificar a turma |
-| `formatar_numero` | Preparar o número para aparecer com vírgula e duas casas decimais |
+| `formatar_numero` | Mostrar médias com vírgula, duas casas e arredondamento escolar |
+| `formatar_total` | Mostrar todos os dígitos do total que podem mudar a classificação |
 | `atualizar_estado` e `invalidar_resultados` | Acompanhar o preenchimento e retirar resultados antigos |
 | `processar_resultados` | Coordenar a ação do botão de cálculo |
 | `criar_interface` e `abrir_configuracoes` | Montar a janela e as opções da turma |
@@ -112,15 +114,17 @@ A função `calcular_resultados` não depende dos controles da janela para fazer
 
 | Decisão | Motivo ou efeito |
 |---|---|
-| Classificar pelo total exato | O arredondamento mostrado na tela não deve mudar a situação |
+| Classificar pelo total exato | A coluna Total preserva os dígitos decisivos para que o valor visível explique a situação |
 | Manter a média | Permitir consultar o desempenho médio de cada aluno e da turma |
+| Arredondar médias com `ROUND_HALF_UP` | Apresentar o arredondamento escolar esperado, como `6,125 → 6,13` |
 | Usar números `Decimal` | Trabalhar com notas decimais sem as pequenas diferenças típicas da representação binária |
 | Usar precisão de 60 dígitos nos cálculos de resultados | Dar margem às operações com entradas numéricas de até 30 caracteres |
 | Exigir o preenchimento da turma inteira | Evitar resultados de turma baseados em dados faltantes |
 | Permitir nomes repetidos | Cada aluno é associado à sua linha, não apenas ao nome |
 | Aceitar quantidades a partir de 1, sem teto programado | Adaptar o formulário à necessidade do usuário; o computador ainda tem limites de recursos |
 | Guardar os dados apenas durante a sessão | Salvar e abrir turmas ainda é uma melhoria proposta |
-| Confirmar alterações que limpam a turma | Permitir que a pessoa cancele antes de perder o preenchimento |
+| Confirmar alterações quando há dados preenchidos | Permitir que a pessoa cancele antes de perder a turma; uma tela vazia não exige confirmação |
+| Avisar configurações com mais de 2.000 campos | Reduzir o risco de lentidão sem criar um máximo rígido |
 | Manter o prompt original | Preservar as orientações pedagógicas do trabalho |
 
 As opções da turma são guardadas em variáveis de configuração:
@@ -128,9 +132,10 @@ As opções da turma são guardadas em variáveis de configuração:
 | Nome no código | Significado |
 |---|---|
 | `QUANTIDADE_ALUNOS` | Número de alunos da turma |
-| `QUANTIDADE_NOTAS` | Número de avaliações por aluno |
-| `NOTA_MINIMA` e `NOTA_MAXIMA` | Menor e maior nota aceitas por avaliação |
-| `TOTAL_RECUPERACAO` e `TOTAL_APROVACAO` | Totais necessários para cada faixa de situação |
+| `QUANTIDADE_NOTAS` | Número de notas por aluno |
+| `NOTA_MAXIMA_SISTEMA` | Maior soma permitida para cada aluno |
+| `TOTAL_APROVACAO` | Nota total mínima para aprovação |
+| `TOTAL_RECUPERACAO` | Nota total mínima para fazer recuperação |
 
 ## Escolhas para uma janela mais amigável
 
@@ -156,16 +161,19 @@ Os comentários do código explicam também os métodos e atalhos utilizados. Ao
 
 ## O que já foi verificado
 
-O histórico de desenvolvimento de **19/09/2026** registra:
+A revisão final de **20/09/2026** registra:
 
-- Testes de totais, médias, situações e valores nos limites de classificação.
-- Testes de entradas inválidas, mudança de configuração, limpeza e ações da janela.
-- Verificação de uma turma de 100 alunos com 20 avaliações e de linhas de notas independentes. Esse cenário foi um teste, não um limite do sistema.
-- Revisão visual do layout arredondado e da coluna Total.
-- Geração do executável e confirmação de abertura e encerramento normal no Windows, com código de saída 0.
-- Ausência de teste em outro computador até esse registro.
+- Compilação sintática de `main.py` e `testes.py` sem erros.
+- Testes de totais exatos, médias informativas, aprovação, recuperação e reprovação nos limites configurados.
+- Testes da nota máxima do sistema, inclusive soma parcial acima do máximo, valores decimais, arredondamento escolar e normalização de `-0`.
+- Testes de entradas inválidas, prévia dos critérios, mudança de configuração, limpeza e encerramento da janela.
+- Revisão visual da janela no tamanho de notebook de 1180 × 658 pixels: os cinco alunos iniciais ficam visíveis e as barras de rolagem aparecem apenas quando necessárias.
+- Revisão visual da tela de configuração com as três regras pedidas: nota máxima, mínima para aprovação e mínima para recuperação.
+- Geração de `dist/ControleDeNotas.exe` e confirmação de que o processo abre e responde no Windows.
+- Auditoria padrão do Codex Security em todos os 14 arquivos do projeto, sem vulnerabilidades reportáveis. A adoção futura de hashes para todas as dependências e de assinatura do executável foi registrada como melhoria de procedência do build.
+- Ausência de teste do executável em outro computador até este registro.
 
-**Código de saída 0** significa que o processo terminou normalmente. Os registros acima descrevem verificações anteriores; mudanças futuras precisam de novas verificações apropriadas.
+Os registros acima descrevem as verificações desta versão. Mudanças futuras precisam de novas verificações apropriadas.
 
 O ambiente usado na implementação tinha **Python 3.13.0**, **PyInstaller 6.22.3** e Windows. As versões citadas no PDF pertencem à comprovação anterior da equipe e podem ser diferentes desse ambiente.
 

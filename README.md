@@ -1,6 +1,6 @@
 # Controle de Notas — guia para começar
 
-Este programa ajuda a registrar as notas de uma turma e descobrir quem está **aprovado, em recuperação ou reprovado**. Ele abre em uma janela no Windows e permite escolher a quantidade de alunos, as avaliações e os critérios de pontuação.
+Este programa ajuda a registrar as notas de uma turma e descobrir quem está **aprovado, em recuperação ou reprovado**. Ele abre em uma janela no Windows e permite escolher a quantidade de alunos, quantas notas cada um terá, a nota máxima do sistema e as notas mínimas para aprovação e recuperação.
 
 **A situação do aluno depende da soma das notas.** A média também aparece na tela para facilitar a consulta. Você não precisa saber programar para usar o aplicativo.
 
@@ -20,12 +20,12 @@ Este programa ajuda a registrar as notas de uma turma e descobrir quem está **a
 ## Primeiro uso em 5 passos
 
 1. Abra a pasta `dist` e dê dois cliques em **ControleDeNotas.exe**. Esse é o arquivo que inicia o programa. O executável fornecido é para Windows de 64 bits e não exige Python instalado.
-2. Clique em **Configurar turma e critérios** se precisar mudar a quantidade de alunos, avaliações ou pontos necessários. Os valores iniciais já permitem experimentar o sistema.
+2. Clique em **Configurar notas** se precisar mudar a quantidade de alunos, o número de notas, a nota máxima do sistema ou as notas mínimas. A própria janela mostra uma prévia das três situações.
 3. Digite o nome e todas as notas de cada aluno. Você pode escrever `7,5` ou `7.5`: as duas formas são aceitas.
 4. Clique em **Calcular resultados**. Cada linha mostrará o total, a média e a situação do aluno. O painel abaixo apresenta o resumo da turma.
 5. Para começar outro preenchimento com as mesmas regras, clique em **Limpar** e confirme.
 
-> Os dados ficam guardados somente enquanto o programa está aberto. Ao sair, nomes, notas e configurações não são salvos. Aplicar uma mudança nas configurações também inicia uma turma vazia, após confirmação.
+> Os dados ficam guardados somente enquanto o programa está aberto. Ao sair, nomes, notas e configurações não são salvos. Aplicar uma mudança nas configurações inicia uma turma vazia; quando já existe preenchimento, o programa pede confirmação antes de apagar.
 
 Se a pasta `dist` ainda não estiver disponível, use o código Python ou gere o executável seguindo as instruções de desenvolvimento mais abaixo.
 
@@ -33,7 +33,7 @@ Se a pasta `dist` ainda não estiver disponível, use o código Python ou gere o
 
 O fundo creme claro e o cabeçalho verde sálvia deixam a janela mais suave. Os cantos arredondados e os campos mais espaçosos ajudam a encontrar onde digitar e onde consultar os resultados.
 
-- **Comece pelo cabeçalho:** ele apresenta a turma e o acesso às configurações.
+- **Comece pelo cabeçalho:** ele apresenta a turma, a nota máxima, as três faixas de resultado e o acesso às configurações.
 - **Preencha a área central:** cada aluno ocupa uma linha, com nome, notas e resultados.
 - **Confira o resumo abaixo:** ele reúne as médias e a quantidade de alunos em cada situação.
 - **Use o teclado se preferir:** `Tab` passa entre os controles; um contorno indica o botão selecionado, que pode ser acionado com `Enter` ou `Espaço`.
@@ -42,7 +42,7 @@ O tamanho inicial da janela se adapta à tela do computador. As barras de rolage
 
 ## Um exemplo para entender os resultados
 
-Imagine três avaliações de 0 a 10 pontos, recuperação a partir de **12 pontos no total** e aprovação a partir de **18 pontos no total**.
+Imagine três notas, uma **nota máxima de 30 pontos no sistema**, recuperação a partir de **12 pontos no total** e aprovação a partir de **18 pontos no total**.
 
 | Aluno | Nota 1 | Nota 2 | Nota 3 | Total | Média | Situação |
 |---|---:|---:|---:|---:|---:|---|
@@ -66,34 +66,29 @@ Nesse exemplo, o resumo terá 1 aprovado, 1 em recuperação, 1 reprovado, médi
 
 ## Como configurar a turma
 
-Abra **Configurar turma e critérios** e preencha:
+Abra **Configurar notas** e preencha:
 
 | Campo | O que significa | Valor inicial |
 |---|---|---:|
 | Quantidade de alunos | Quantas linhas serão preenchidas | 5 |
-| Avaliações por aluno | Quantas notas cada aluno terá | 3 |
-| Nota mínima aceita | Menor valor permitido em cada avaliação | 0 |
-| Nota máxima aceita | Maior valor permitido em cada avaliação | 10 |
-| Nota total para recuperação | Soma mínima para ficar em recuperação | 12 |
-| Nota total para aprovação | Soma mínima para ficar aprovado | 18 |
+| Notas por aluno | Quantos campos de nota cada aluno terá | 3 |
+| Nota máxima do sistema | Maior total que um aluno pode alcançar | 30 |
+| Nota mínima para aprovação | Total a partir do qual o aluno é aprovado | 18 |
+| Nota mínima para fazer recuperação | Total a partir do qual o aluno entra em recuperação | 12 |
 
-As quantidades aceitam números inteiros a partir de **1**, sem máximo fixado no código. Turmas maiores exigem mais memória e processamento do computador. Todos os alunos usam a mesma quantidade de avaliações e a mesma faixa de notas; todas as avaliações têm o mesmo peso.
+As quantidades aceitam números inteiros a partir de **1**, sem máximo rígido no código. Turmas maiores exigem mais memória e processamento. Se uma configuração criar mais de 2.000 campos de nota, o programa avisa que a janela pode ficar lenta e permite cancelar antes de construí-la.
 
-O total para recuperação precisa ser menor que o total para aprovação. Os dois devem caber na pontuação possível da turma. Por exemplo:
+A configuração segue esta ordem:
 
 ```text
-4 avaliações, cada uma de 0 a 25 pontos
-Menor total possível = 4 × 0 = 0
-Maior total possível = 4 × 25 = 100
-
-Uma configuração válida:
-Recuperação a partir de 40 pontos
-Aprovação a partir de 60 pontos
+0 ≤ nota mínima para recuperação
+nota mínima para recuperação < nota mínima para aprovação
+nota mínima para aprovação ≤ nota máxima do sistema
 ```
 
-Nesse caso, tentar configurar aprovação em 110 pontos gera um aviso, porque ninguém poderia alcançar esse total. A faixa de notas também pode incluir números negativos, se isso fizer sentido para a atividade.
+Cada nota digitada deve ficar entre zero e a nota máxima do sistema. Além disso, a **soma das notas de um aluno não pode ultrapassar a nota máxima**. Por exemplo, com nota máxima 100, quatro notas `20 + 15 + 30 + 25` formam um total válido de 90. O total `40 + 30 + 20 + 20 = 110` é recusado.
 
-Ao mudar a quantidade de avaliações, revise os limites totais: o programa usa os valores que você informar, sem reajustá-los automaticamente.
+A prévia da configuração atualiza enquanto você digita. Ela mostra claramente os intervalos de reprovação, recuperação e aprovação. A quantidade de notas muda apenas o número de campos e o cálculo da média; a nota máxima e as duas notas mínimas continuam sendo os valores definidos por você.
 
 ## Botões, atalhos e avisos
 
@@ -101,7 +96,7 @@ Ao mudar a quantidade de avaliações, revise os limites totais: o programa usa 
 |---|---|---|
 | Calcular | **Calcular resultados** ou `Ctrl + Enter` | Confere o preenchimento e mostra os resultados |
 | Limpar | **Limpar** ou `Ctrl + L` | Apaga nomes, notas e resultados após confirmação; mantém os critérios |
-| Mudar as regras | **Configurar turma e critérios** | Permite definir uma nova turma |
+| Mudar as regras | **Configurar notas** | Permite definir uma nova turma e mostra uma prévia das situações |
 | Passar ao próximo campo | `Tab` | Move o cursor entre os controles |
 | Ver campos fora da tela | Barras de rolagem | Mostra mais alunos ou avaliações |
 | Fechar | **Sair** ou o `X` da janela | Pede confirmação quando há dados preenchidos |
@@ -132,11 +127,11 @@ Ainda não. Ele identifica quem está em recuperação. Uma prova extra e uma no
 
 **Quais notas são aceitas?**
 
-Números dentro da faixa configurada, com vírgula ou ponto decimal. Campos vazios, palavras, infinito e formatos como `1e2` são recusados. Cada entrada numérica pode ter até 30 caracteres.
+Números de zero até a nota máxima do sistema, com vírgula ou ponto decimal. A soma do aluno também precisa respeitar essa nota máxima. Campos vazios, valores negativos, palavras, infinito e formatos como `1e2` são recusados. Cada entrada numérica pode ter até 30 caracteres.
 
 **O arredondamento muda a situação?**
 
-O programa compara o total antes de exibi-lo com duas casas decimais. Por exemplo, com aprovação em 18, um total exato de `17,999` aparece como `18,00`, mas continua abaixo do limite para aprovação.
+Não. A situação usa o total exato, e a coluna **Total** mantém todos os dígitos que podem influenciar a classificação. Assim, `17,999` continua visível como `17,999` e não parece ter alcançado 18. As médias são apenas informativas e aparecem com duas casas decimais, usando o arredondamento escolar comum: `6,125` aparece como `6,13`.
 
 ## Para quem vai estudar ou alterar o programa
 
